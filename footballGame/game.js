@@ -1,6 +1,22 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
 
 
+function collisionDetection() {
+  //angle hit object
+  //velocity of the object
+  //angle of object hit
+  //calculate new velocity
+}
+
+function genShot() {
+      //    X Y Z
+  // var vector = [5,24,40];
+  var vector = [0,24,0];
+  return vector;
+
+  //each determine the x speed, y speed and z speed, then multiply by a multiplier after to get the correct speed on screen.
+}
+
 function main() {
     const canvas = document.querySelector('#canvas');
     const renderer = new THREE.WebGLRenderer({canvas});
@@ -67,6 +83,10 @@ function main() {
   
     var towards = true;
 
+    var velocity = genShot();
+    const gravity = 60;
+    const multiplier = 0.01;
+
     function render(time) {
       time *= 0.001;
   
@@ -75,19 +95,28 @@ function main() {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
       }
-      
-      
-      if (towards) {
-        football.position.z += 0.25;
-        if (football.position.z > 1) {
-          towards = false;
-        } 
-      } else {
-        football.position.z -= 0.25;
-        if (football.position.z < -20) {
-          towards = true;
-        } 
-      }
+
+
+      football.rotation.y = time * 1;
+      football.rotation.x = time * 1;
+
+      football.position.x += velocity[0] * multiplier;
+      football.position.y += velocity[1] * multiplier;
+      football.position.z += velocity[2] * multiplier;
+
+      velocity[1] -= gravity * multiplier;
+
+      // if (towards) {
+      //   football.position.z += 0.25;
+      //   if (football.position.z > 1) {
+      //     towards = false;
+      //   } 
+      // } else {
+      //   football.position.z -= 0.25;
+      //   if (football.position.z < -20) {
+      //     towards = true;
+      //   } 
+      // }
 
 
 
