@@ -6,12 +6,15 @@ function collisionDetection() {
   //velocity of the object
   //angle of object hit
   //calculate new velocity
+  //maybe use raycasting to find resulting vector of where to go...
+
+
 }
 
 function genShot() {
       //    X Y Z
   // var vector = [5,24,40];
-  var vector = [0,24,0];
+  var vector = [0,24,0.001];
   return vector;
 
   //each determine the x speed, y speed and z speed, then multiply by a multiplier after to get the correct speed on screen.
@@ -50,7 +53,10 @@ function main() {
     gtexture.repeat.set(17, 15);
     const ground = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({map: gtexture}));    
     ground.position.set(0 ,-2, 0);
-    scene.add(ground);
+
+    //bounding box for ground to detect collision 
+    let groundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    groundBox.setFromObject(ground);
 
     //load the ball into the scene
     const btexture = loader.load('./textures/FootbalT.png');
@@ -58,18 +64,23 @@ function main() {
     const material = new THREE.MeshBasicMaterial({map: btexture});
     const football = new THREE.Mesh(ballgeometry, material );
     football.position.set(0,1, -20);
-    scene.add(football);
+    let ballBox = new THREE.Sphere(football.position, 0.5);
+    scene.add(football, ground);
 
-    const ballMat = [
-        new THREE.MeshBasicMaterial({color:0xFF0000}),
-        new THREE.MeshBasicMaterial({color:0xFF0000}),
-        new THREE.MeshBasicMaterial({color:0xFF0000}),
-        new THREE.MeshBasicMaterial({color:0xFF0000}),
-        new THREE.MeshBasicMaterial({color:0xFF0000}),
-        new THREE.MeshBasicMaterial({color:0xFF0000})
-    ];
 
-  
+
+
+    function checkCollision() {
+      if (ballBox.intersectsBox(groundBox)) {
+        //get vector of ball, raytrace taht with the surface and calculate the new vector
+
+
+
+        velocity[1] *= -0.8 
+      }
+    }
+
+
     function resizeRendererToDisplaySize(renderer) {
       const canvas = renderer.domElement;
       const width = canvas.clientWidth;
@@ -105,7 +116,7 @@ function main() {
       football.position.z += velocity[2] * multiplier;
 
       velocity[1] -= gravity * multiplier;
-
+      // ballBox.copy(football.geometry.boundingBox).applyMatrix4(football.matrixWorld);
       // if (towards) {
       //   football.position.z += 0.25;
       //   if (football.position.z > 1) {
@@ -117,6 +128,7 @@ function main() {
       //     towards = true;
       //   } 
       // }
+      checkCollision();
 
 
 
