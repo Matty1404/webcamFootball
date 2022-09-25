@@ -14,7 +14,7 @@ function collisionDetection() {
 function genShot() {
       //    X Y Z
   // var vector = [5,24,40];
-  var vector = [0,24,0.001];
+  var vector = [-10,24,6];
   return vector;
 
   //each determine the x speed, y speed and z speed, then multiply by a multiplier after to get the correct speed on screen.
@@ -75,12 +75,15 @@ function main() {
         //get vector of ball, raytrace taht with the surface and calculate the new vector
 
 
-
-        velocity[1] *= -0.8 
+        
+        velocity[1] *= -0.7;
+        if (velocity[1] < 3) {
+          velocity[1] = 0;
+        }
       }
     }
 
-
+ 
     function resizeRendererToDisplaySize(renderer) {
       const canvas = renderer.domElement;
       const width = canvas.clientWidth;
@@ -92,10 +95,9 @@ function main() {
       return needResize;
     }
   
-    var towards = true;
-
     var velocity = genShot();
     const gravity = 60;
+    const airRes = 1;
     const multiplier = 0.01;
 
     function render(time) {
@@ -108,32 +110,32 @@ function main() {
       }
 
 
-      football.rotation.y = time * 1;
-      football.rotation.x = time * 1;
+      football.rotation.x += velocity[2] * 0.06;
+      football.rotation.y +=  velocity[0] * 0.06;
 
       football.position.x += velocity[0] * multiplier;
       football.position.y += velocity[1] * multiplier;
       football.position.z += velocity[2] * multiplier;
 
       velocity[1] -= gravity * multiplier;
-      // ballBox.copy(football.geometry.boundingBox).applyMatrix4(football.matrixWorld);
-      // if (towards) {
-      //   football.position.z += 0.25;
-      //   if (football.position.z > 1) {
-      //     towards = false;
-      //   } 
-      // } else {
-      //   football.position.z -= 0.25;
-      //   if (football.position.z < -20) {
-      //     towards = true;
-      //   } 
-      // }
+      if (velocity[0] > 0) {
+        velocity[0] -= airRes * multiplier;
+      } else {
+        velocity[0] = 0;
+      }
+      if (velocity[2] > 0) {
+        velocity[2] -= airRes * multiplier;
+      } else {
+        velocity[2] = 0;
+      }
       checkCollision();
-
-
 
       renderer.render(scene, camera);
   
+      if (football.position.z > -2) {
+        console.log("GOALLLLLL")
+      }
+
       requestAnimationFrame(render);
     }
   
