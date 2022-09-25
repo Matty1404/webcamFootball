@@ -36,6 +36,14 @@ function main() {
     ground.position.set(0 ,-2, 0);
     scene.add(ground);
 
+    //load the ball into the scene
+    const btexture = loader.load('./textures/FootbalT.png');
+    const ballgeometry = new THREE.SphereGeometry( 0.5, 32, 16 );
+    const material = new THREE.MeshBasicMaterial({map: btexture});
+    const football = new THREE.Mesh(ballgeometry, material );
+    football.position.set(0,1, -20);
+    scene.add(football);
+
     const ballMat = [
         new THREE.MeshBasicMaterial({color:0xFF0000}),
         new THREE.MeshBasicMaterial({color:0xFF0000}),
@@ -45,13 +53,6 @@ function main() {
         new THREE.MeshBasicMaterial({color:0xFF0000})
     ];
 
-    const ball = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 1), ballMat);
-    ball.position.set(3,0, 0);
-    scene.add(ball);
-
-    const cube3 = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 1), ballMat);
-    cube3.position.set(-2,0, -2);
-    scene.add(cube3);
   
     function resizeRendererToDisplaySize(renderer) {
       const canvas = renderer.domElement;
@@ -64,6 +65,8 @@ function main() {
       return needResize;
     }
   
+    var towards = true;
+
     function render(time) {
       time *= 0.001;
   
@@ -72,9 +75,22 @@ function main() {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
       }
-  
       
-  
+      
+      if (towards) {
+        football.position.z += 0.25;
+        if (football.position.z > 1) {
+          towards = false;
+        } 
+      } else {
+        football.position.z -= 0.25;
+        if (football.position.z < -20) {
+          towards = true;
+        } 
+      }
+
+
+
       renderer.render(scene, camera);
   
       requestAnimationFrame(render);
