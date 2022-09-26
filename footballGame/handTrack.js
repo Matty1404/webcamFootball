@@ -7,7 +7,7 @@ import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 
 export function drawHands(canvasElement, videoElement) {
     var canvasCtx = canvasElement.getContext('2d');
-    function onResults(results) {
+    function asd(results) {
         console.log(results)
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -32,7 +32,7 @@ export function drawHands(canvasElement, videoElement) {
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5
       });
-      hands.onResults(onResults);
+      hands.onResults(asd);
       
       
       const camera = new Camera(videoElement, {

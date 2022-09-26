@@ -5,10 +5,26 @@ import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
 
 
+export function drawHands3D(scene, videoElement, pointArray) {
 
-export function drawHands3D(scene, videoElement) {
+    //for each result, add a circle to scene, on each update, move each circle of the result 
+
+
     function onResults(results) {
-        console.log(results)
+        //from the array of points, update to be that of the coord from the result
+        if (results.multiHandLandmarks.length == 1) {
+          const handpoints = results.multiHandLandmarks[0];
+          console.log(handpoints);
+          for (let i = 0; i < 21; i++) {
+            pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, -handpoints[i].z * 8 - 2);
+            console.log(pointArray[i].position.x)
+          }
+        } else if (results.multiHandLandmarks.length == 2) {
+          const handpoints = results.multiHandLandmarks[0].concat(results.multiHandLandmarks[1]);
+          for (let i = 0; i < 21 * 2; i++) {
+            pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, -handpoints[i].z * 8 - 2);
+          }
+        }
       }
       
       const hands = new Hands({locateFile: (file) => {
@@ -16,10 +32,17 @@ export function drawHands3D(scene, videoElement) {
       }});
       hands.setOptions({
         maxNumHands: 2,
-        modelComplexity: 1,
+        modelComplexity: 1, //0
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5
       });
+
+
+      //default at 0, 0, -3
+      //once detected, set position of them to be the coords 
+
+      //create a shit tonne of points for each hand and add them to scene and an array
+
       hands.onResults(onResults);
       
       
