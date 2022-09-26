@@ -1,33 +1,29 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+import { drawHands3D } from './handTrack3D.js';
 
 
-function collisionDetection() {
-  //angle hit object
-  //velocity of the object
-  //angle of object hit
-  //calculate new velocity
-  //maybe use raycasting to find resulting vector of where to go...
+const videoElement = document.getElementsByClassName('input_video')[0];
 
-
-}
 
 function genShot() {
       //    X Y Z
   // var vector = [5,24,40];
-  var vector = [-10,24,6];
+  var vector = [-2,24,24];
+  // var vector = [0,0,0];
   return vector;
 
   //each determine the x speed, y speed and z speed, then multiply by a multiplier after to get the correct speed on screen.
 }
 
 function main() {
+
     const canvas = document.querySelector('#canvas');
     const renderer = new THREE.WebGLRenderer({canvas});
     renderer.setClearColor(0x87CEEB, 1);
 
 
     //camera settings
-    const fov = 75;
+    const fov = 72;
     const aspect = 2;  // the canvas default
     const near = 0.1;
     const far = 100;
@@ -38,6 +34,7 @@ function main() {
     camera.lookAt(new THREE.Vector3(0,0,-10)); 
     const scene = new THREE.Scene();
   
+    drawHands3D(scene, videoElement);
 
     //create ground
     const boxWidth = canvas.width;
@@ -52,7 +49,7 @@ function main() {
     gtexture.wrapT = THREE.RepeatWrapping;
     gtexture.repeat.set(17, 15);
     const ground = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({map: gtexture}));    
-    ground.position.set(0 ,-2, 0);
+    ground.position.set(0 ,0, 0);
 
     //bounding box for ground to detect collision 
     let groundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
@@ -63,7 +60,7 @@ function main() {
     const ballgeometry = new THREE.SphereGeometry( 0.5, 32, 16 );
     const material = new THREE.MeshBasicMaterial({map: btexture});
     const football = new THREE.Mesh(ballgeometry, material );
-    football.position.set(0,1, -20);
+    football.position.set(0,1, -30);
     let ballBox = new THREE.Sphere(football.position, 0.5);
     scene.add(football, ground);
 
@@ -77,7 +74,7 @@ function main() {
 
         
         velocity[1] *= -0.7;
-        if (velocity[1] < 3) {
+        if (velocity[1] < 1) {
           velocity[1] = 0;
         }
       }
@@ -118,12 +115,12 @@ function main() {
       football.position.z += velocity[2] * multiplier;
 
       velocity[1] -= gravity * multiplier;
-      if (velocity[0] > 0) {
+      if (Math.abs(velocity[0]) > 0.2) {
         velocity[0] -= airRes * multiplier;
       } else {
         velocity[0] = 0;
       }
-      if (velocity[2] > 0) {
+      if (Math.abs(velocity[2]) > 0.2) {
         velocity[2] -= airRes * multiplier;
       } else {
         velocity[2] = 0;
@@ -138,8 +135,9 @@ function main() {
 
       requestAnimationFrame(render);
     }
-  
+    
     requestAnimationFrame(render);
   }
   
   main();
+  

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestWebcam</title>
+
+    <style>
+        #wrapper {
+            margin: 0 auto;
+            text-align: center;
+        }
+        #output_canvas {
+            width:  60%;
+            height: 60%;
+            margin: 0;
+            border: 1px solid black;
+        }
+    </style>
+
+</head>
+    <body>
+        <div id="wrapper">
+            <h1>Webcam</h1>
+            <video class="input_video" style = 'display: none'></video>
+            <canvas class="output_canvas" width="1280px" height="720px"></canvas>
+        </div>
+        <script type = "module" src = "app.js"></script>
+    </body>
+</head>
+</html>
