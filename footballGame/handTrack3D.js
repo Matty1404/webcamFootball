@@ -5,7 +5,9 @@ import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
 
 
-export function drawHands3D(scene, videoElement, pointArray) {
+
+
+export function drawHands3D(videoElement, pointArray) {
 
     //for each result, add a circle to scene, on each update, move each circle of the result 
 
@@ -16,13 +18,13 @@ export function drawHands3D(scene, videoElement, pointArray) {
           const handpoints = results.multiHandLandmarks[0];
           console.log(handpoints);
           for (let i = 0; i < 21; i++) {
-            pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, -handpoints[i].z * 8 - 2);
+            pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, (handpoints[i].z - handpoints[0].z) * 8 - 2);
             console.log(pointArray[i].position.x)
           }
         } else if (results.multiHandLandmarks.length == 2) {
           const handpoints = results.multiHandLandmarks[0].concat(results.multiHandLandmarks[1]);
           for (let i = 0; i < 21 * 2; i++) {
-            pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, -handpoints[i].z * 8 - 2);
+            pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, (handpoints[i].z - handpoints[0].z) * 8 - 2);
           }
         }
       }
@@ -44,11 +46,16 @@ export function drawHands3D(scene, videoElement, pointArray) {
       //create a shit tonne of points for each hand and add them to scene and an array
 
       hands.onResults(onResults);
-      
+      var frame = 0;
       
       const camera = new Camera(videoElement, {
         onFrame: async () => {
-          await hands.send({image: videoElement});
+          if (frame < 3) {
+            frame++;
+          } else {
+            await hands.send({image: videoElement});
+            frame = 0;
+          }
         },
         width: 1280,
         height: 720

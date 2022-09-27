@@ -4,12 +4,18 @@ import { drawHands3D } from './handTrack3D.js';
 
 const videoElement = document.getElementsByClassName('input_video')[0];
 
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
 
 function genShot() {
       //    X Y Z
   // var vector = [5,24,40];
   // var vector = [-2,24,24];
-  var vector = [-2,24,10];
+  let xShot = getRndInteger(-30, 30);
+  let yShot = getRndInteger(140, 250);
+  let zShot = getRndInteger(240, 550);
+  var vector = [xShot / 10.0,yShot / 10.0,zShot / 10.0];
   // var vector = [0,0,0];
   return vector;
 
@@ -81,13 +87,48 @@ function main() {
     let ballBox = new THREE.Sphere(football.position, 0.5);
     scene.add(football, ground);
 
-
     //gen hands
 
     var [pointArray, pointBoxs] = initialise(scene);
     drawHands3D(scene, videoElement, pointArray);
 
 
+
+    function onResults(results) {
+      //from the array of points, update to be that of the coord from the result
+      if (results.multiHandLandmarks.length == 1) {
+        const handpoints = results.multiHandLandmarks[0];
+        console.log(handpoints);
+        for (let i = 0; i < 21; i++) {
+          pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, (handpoints[i].z - handpoints[0].z) * 8 - 2);
+          console.log(pointArray[i].position.x)
+        }
+      } else if (results.multiHandLandmarks.length == 2) {
+        const handpoints = results.multiHandLandmarks[0].concat(results.multiHandLandmarks[1]);
+        for (let i = 0; i < 21 * 2; i++) {
+          pointArray[i].position.set(-handpoints[i].x * 8 + 3, -handpoints[i].y * 8 + 8, (handpoints[i].z - handpoints[0].z) * 8 - 2);
+        }
+      }
+    }
+    
+    //call hand api
+
+    const hands = new Hands({locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }});
+    hands.setOptions({
+      maxNumHands: 2,
+      modelComplexity: 1, //0
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    hands.onResults(onResults);
+    
+
+    drawHands3D(videoElement, pointArray);
+
+    
     function checkCollision() {
       const x = football.position.x;
       const y = football.position.y;
@@ -109,6 +150,10 @@ function main() {
         if (ballBox.intersectsSphere(point)) {
           velocity[0] *= -0.5;
           velocity[2] *= -0.5;
+          setTimeout(() => {
+            football.position.set(0, 1, -30)
+            velocity = genShot();
+          }, 3000)
           break;
         }
       }
@@ -136,7 +181,7 @@ function main() {
     const gravity = 60;
     const airRes = 1;
     const multiplier = 0.01;
-
+    var scored = false;
     function render(time) {
       time *= 0.001;
   
@@ -145,6 +190,10 @@ function main() {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
       }
+
+      //update hand positions
+      // getHandPos();
+
 
 
       football.rotation.x += velocity[2] * 0.06;
@@ -176,9 +225,16 @@ function main() {
       checkCollision();
 
       renderer.render(scene, camera);
-  
-      if (football.position.z > -2) {
+      if (football.position.z > -1) {
         console.log("GOALLLLLL")
+        if (!scored) {
+          setTimeout(() => {
+            football.position.set(0, 1, -30)
+            velocity = genShot();
+            scored = false;
+          }, 1000)
+        }
+        scored = true;
       }
 
       requestAnimationFrame(render);
