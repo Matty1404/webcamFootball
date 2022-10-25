@@ -8,15 +8,22 @@ function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
+var goals = 0;
+var total = 0;
+var saved = 0;
+
 function genShot() {
       //    X Y Z
   // var vector = [5,24,40];
   // var vector = [-2,24,24];
-  let xShot = getRndInteger(-30, 30);
+  let xShot = getRndInteger(-40, 40);
   let yShot = getRndInteger(140, 250);
-  let zShot = getRndInteger(240, 550);
+  let zShot = getRndInteger(500, 550);
   var vector = [xShot / 10.0,yShot / 10.0,zShot / 10.0];
+  saved = total - goals;
+  document.getElementById("saves").innerHTML = "Saves: " + saved;
   // var vector = [0,0,0];
+  total++;
   return vector;
 
   //each determine the x speed, y speed and z speed, then multiply by a multiplier after to get the correct speed on screen.
@@ -226,8 +233,10 @@ function main() {
 
       renderer.render(scene, camera);
       if (football.position.z > -1) {
-        console.log("GOALLLLLL")
         if (!scored) {
+          goals++;
+          document.getElementById("goals").innerHTML = "Goals: " + goals;
+
           setTimeout(() => {
             football.position.set(0, 1, -30)
             velocity = genShot();

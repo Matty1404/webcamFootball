@@ -2,7 +2,6 @@ import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
-import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
 
 
 

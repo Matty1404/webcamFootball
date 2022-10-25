@@ -16,12 +16,26 @@
                 margin: 0;
                 border: 1px solid black;
             }
+            #info {
+                position: absolute;
+                top: 10px;
+                width: 100%;
+                text-align: left;
+                display: flex;
+                z-index: 100;
+                display:block;
+            }
         </style>
 
         <script type = "module" src = "game.js"></script>
     </head>
         <body>
             <div id="wrapper">
+                <div id="info">
+                    <h2 id = "goals">Goals: </h2>
+                    <h2 id = "saves">Saves: </h2>
+
+                </div>
                 <video class="input_video" style = "display: none" ></video>
                 <canvas id="canvas">
 
